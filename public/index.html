@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>Pi Payment Test</title>
@@ -8,24 +8,42 @@
 </head>
 <body>
   <h1>✅ Pi Payment Test Page</h1>
-  <button onclick="testPayment()">🔄 Test Pi Payment</button>
+  <button onclick="testPayment()">💰 Test Pi Payment</button>
 
   <script>
-    // Pi SDK 초기화
-    Pi.init({ version: "2.0" });
+    // Pi SDK 초기화 (sandbox:true 꼭 필요!)
+    Pi.init({ version: "2.0", sandbox: true });
 
     async function testPayment() {
       try {
-        const payment = await Pi.createPayment({
-          amount: 1, // 1 Test Pi
-          memo: "Test transaction",
-          metadata: { purpose: "11-step-check" }
-        });
-        console.log("Payment created:", payment);
-        alert("✅ Payment flow started! Check Pi Browser.");
+        const payment = await Pi.createPayment(
+          {
+            amount: 1,
+            memo: "Test transaction",
+            metadata: { purpose: "11-step-check" }
+          },
+          {
+            onReadyForServerApproval: function(paymentId) {
+              console.log("➡️ Ready for approval:", paymentId);
+              alert("Step1: Ready for approval ✅");
+            },
+            onReadyForServerCompletion: function(paymentId, txid) {
+              console.log("➡️ Payment completed:", paymentId, txid);
+              alert("Step2: Payment completed ✅");
+            },
+            onCancel: function(paymentId) {
+              console.log("➡️ Payment cancelled:", paymentId);
+              alert("❌ Payment cancelled");
+            },
+            onError: function(error, payment) {
+              console.error("➡️ Payment error:", error, payment);
+              alert("❌ Payment error: " + error.message);
+            }
+          }
+        );
       } catch (err) {
         console.error(err);
-        alert("❌ Payment failed. Check console.");
+        alert("❌ Payment failed. JS error: " + err.message);
       }
     }
   </script>
