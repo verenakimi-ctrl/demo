@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pi Payment Test</title>
+  <!-- Pi SDK 불러오기 -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
+</head>
+<body>
+  <h1>✅ Pi Payment Test Page</h1>
+  <button onclick="testPayment()">🔄 Test Pi Payment</button>
+
+  <script>
+    // Pi SDK 초기화
+    Pi.init({ version: "2.0" });
+
+    async function testPayment() {
+      try {
+        const payment = await Pi.createPayment({
+          amount: 1, // 1 Test Pi
+          memo: "Test transaction",
+          metadata: { purpose: "11-step-check" }
+        });
+        console.log("Payment created:", payment);
+        alert("✅ Payment flow started! Check Pi Browser.");
+      } catch (err) {
+        console.error(err);
+        alert("❌ Payment failed. Check console.");
+      }
+    }
+  </script>
+</body>
+</html>
